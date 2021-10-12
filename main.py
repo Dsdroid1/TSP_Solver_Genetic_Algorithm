@@ -73,7 +73,7 @@ def breed(gene1, gene2, graph):
     child1 = Gene(new_list1,graph)
     child2 = Gene(new_list2,graph)
     # Mutate the child gene if probability of mutation is reached
-    mutation_prob = 0.35
+    mutation_prob = 0.535
     chance1 = random.uniform(0,1)
     if chance1 < mutation_prob:
         # print("Mutated child 1")
@@ -143,10 +143,47 @@ def genetic_algorithm(graph):
         print('No solution found, please try to run the program again[hope for the best]')
     return best_gene_yet
 
+def genetic_algorithm_v2(graph):
+    max_generations_without_improvement = 1000
+    current_generations_without_improvement = 0
+    current_population = generate_population(graph)
+    best_gene_yet = None
+    current_gen = 1
+    for gene in current_population:
+        if best_gene_yet == None:
+            best_gene_yet = gene
+        elif best_gene_yet.get_fitness() < gene.get_fitness():
+            best_gene_yet = gene
+    print(f'Best fitness at generation 1 : {best_gene_yet.get_fitness()}')
+    while current_generations_without_improvement < max_generations_without_improvement:
+        next_gen = make_new_generation(current_population,graph)
+        current_population = next_gen
+        current_gen += 1
+        improvement = False
+        for gene in current_population:
+            if best_gene_yet.get_fitness() < gene.get_fitness():
+                improvement = True
+                best_gene_yet = gene
+        if current_gen % 100 == 0:
+            # Print after every 100 generations
+            print(f'Best fitness at generation {current_gen} : {best_gene_yet.get_fitness()}')
+        if improvement:
+            # Reset the counter, as some improvement occured in this generation
+            current_generations_without_improvement = 0
+        else:
+            current_generations_without_improvement += 1
+    if best_gene_yet is not None and best_gene_yet.is_valid():
+        return best_gene_yet
+    else:
+        return None
+            
+
 if __name__ == "__main__":
     # graph  = read_input('test.txt')
-    graph = read_input('test1.csv')
-    solution = genetic_algorithm(graph)
+    # graph = read_input('test1.csv')
+    # graph = read_input('50nodes.csv')
+    graph = read_input('20nodes.csv')
+    solution = genetic_algorithm_v2(graph)
     if solution is not None:
         # Print the path
         path_list = solution.get_path()
@@ -157,6 +194,8 @@ if __name__ == "__main__":
             path_string += f'-{path_list[0]}'
         print(f'Best Path Found:{path_string}')
         print(f'Cost: {1/solution.get_fitness()}')
+    else:
+        print('No solution found')
     # population = generate_population(graph)
     # for gene in population:
     #     gene.display()
