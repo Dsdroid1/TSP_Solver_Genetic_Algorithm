@@ -77,10 +77,13 @@ def breed(gene1, gene2, graph):
     chance1 = random.uniform(0,1)
     if chance1 < mutation_prob:
         # print("Mutated child 1")
+        # Mutate child twice
+        child1.mutate(graph)
         child1.mutate(graph)
     chance2 = random.uniform(0,1)
     if chance2 < mutation_prob:
         # print("Mutated child 2")
+        child2.mutate(graph)
         child2.mutate(graph)
     return child1,child2
 
@@ -144,7 +147,7 @@ def genetic_algorithm(graph):
     return best_gene_yet
 
 def genetic_algorithm_v2(graph):
-    max_generations_without_improvement = 1000
+    max_generations_without_improvement = 5000
     current_generations_without_improvement = 0
     current_population = generate_population(graph)
     best_gene_yet = None
@@ -182,7 +185,9 @@ if __name__ == "__main__":
     # graph  = read_input('test.txt')
     # graph = read_input('test1.csv')
     # graph = read_input('50nodes.csv')
-    graph = read_input('20nodes.csv')
+    # graph = read_input('20nodes.csv')
+    filename = input("Enter the graph file:")
+    graph = read_input(filename)
     solution = genetic_algorithm_v2(graph)
     if solution is not None:
         # Print the path
